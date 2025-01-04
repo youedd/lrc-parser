@@ -7,10 +7,18 @@ describe("tokenizer", () => {
   });
 
   it("should tokenize a string", () => {
-    const tokenizer = new Tokenizer("abc");
-    expect(tokenizer.next()).toBe("a");
-    expect(tokenizer.next()).toBe("b");
-    expect(tokenizer.next()).toBe("c");
-    expect(tokenizer.next()).toBe(null);
+    const tokenizer = new Tokenizer("[a:b]\n\n\n[c:d]");
+    expect(tokenizer.next()).toEqual({ type: "[", value: "[" });
+    expect(tokenizer.next()).toEqual({ type: "CHAR", value: "a" });
+    expect(tokenizer.next()).toEqual({ type: ":", value: ":" });
+    expect(tokenizer.next()).toEqual({ type: "CHAR", value: "b" });
+    expect(tokenizer.next()).toEqual({ type: "]", value: "]" });
+    expect(tokenizer.next()).toEqual({ type: "NEWLINE", value: "\n\n\n" });
+    expect(tokenizer.next()).toEqual({ type: "[", value: "[" });
+    expect(tokenizer.next()).toEqual({ type: "CHAR", value: "c" });
+    expect(tokenizer.next()).toEqual({ type: ":", value: ":" });
+    expect(tokenizer.next()).toEqual({ type: "CHAR", value: "d" });
+    expect(tokenizer.next()).toEqual({ type: "]", value: "]" });
+    expect(tokenizer.next()).toEqual(null);
   });
 });

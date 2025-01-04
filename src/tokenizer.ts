@@ -1,3 +1,20 @@
+const specs = [
+  { type: "NUMBER", pattern: /^\d+/ },
+  { type: "NEWLINE", pattern: /^\n+/ },
+  { type: "[", pattern: /^\[/ },
+  { type: "]", pattern: /^]/ },
+  { type: ":", pattern: /^:/ },
+  { type: ".", pattern: /^\./ },
+  { type: "CHAR", pattern: /^./ },
+] as const;
+
+export type TokenType = (typeof specs)[number]["type"];
+
+export type Token = {
+  type: TokenType;
+  value: string;
+};
+
 export class Tokenizer {
   pos: number;
 
@@ -5,14 +22,25 @@ export class Tokenizer {
     this.pos = 0;
   }
 
-  next() {
+  next(): Token | null {
     if (this.eof()) {
       return null;
     }
 
-    const char = this.input[this.pos];
-    this.pos++;
-    return char;
+    const str = this.input.slice(this.pos);
+
+    for (const { pattern, type } of specs) {
+      const match = str.match(pattern);
+      if (match) {
+        this.pos += match[0].length;
+        return {
+          type: type,
+          value: match[0],
+        };
+      }
+    }
+
+    throw new Error(`Unexpected token at position ${this.pos}`);
   }
 
   private eof(): boolean {
