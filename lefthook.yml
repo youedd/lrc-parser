@@ -3,20 +3,17 @@
 #   Refer for explanation to following link:
 #   https://github.com/evilmartians/lefthook/blob/master/docs/configuration.md
 #
-# pre-push:
-#   commands:
-#     packages-audit:
-#       tags: frontend security
-#       run: yarn audit
-#     gems-audit:
-#       tags: backend security
-#       run: bundle audit
-#
 
 commit-msg:
   commands:
     "lint commit message":
       run: yarn run commitlint --edit {1}
+
+pre-push:
+  commands:
+    test:
+      glob: "*.{js,ts,jsx,tsx}"
+      run: yarn test
 
 pre-commit:
   parallel: true
@@ -24,6 +21,3 @@ pre-commit:
     lint:
       glob: "*.{js,ts,jsx,tsx}"
       run: yarn xo {staged_files}
-    test:
-      glob: "*.{js,ts,jsx,tsx}"
-      run: yarn test
