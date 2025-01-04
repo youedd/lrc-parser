@@ -1,22 +1,21 @@
-
 export class Tokenizer {
-	pos: number;
+  pos: number;
 
-	constructor(private readonly input: string) {
-		this.pos = 0;
-	}
+  constructor(private readonly input: string) {
+    this.pos = 0;
+  }
 
-	next() {
-		if (this.eof()) {
-			return null;
-		}
+  next() {
+    if (this.eof()) {
+      return null;
+    }
 
-		const char = this.input[this.pos];
-		this.pos++;
-		return char;
-	}
+    const char = this.input[this.pos];
+    this.pos++;
+    return char;
+  }
 
-	private eof(): boolean {
-		return this.pos >= this.input.length;
-	}
+  private eof(): boolean {
+    return this.pos >= this.input.length;
+  }
 }
