@@ -139,6 +139,26 @@ export class Parser {
         };
       }
 
+      case "offset": {
+        const prefix = this.eat("CHAR");
+
+        if (!["+", "-"].includes(prefix.value)) {
+          throw new Error(`Unexpected token: ${prefix.value}`);
+        }
+
+        const multiplier = prefix.value === "+" ? 1 : -1;
+        const valueToken = this.eat("NUMBER");
+        const value = parseInt(valueToken.value, 10) * multiplier;
+
+        this.eat("]");
+
+        return {
+          type: "InfoLine",
+          tag: "offset",
+          value,
+        };
+      }
+
       default: {
         throw new Error(`Unexpected token: ${this.lookaheadToken}`);
       }

@@ -228,4 +228,36 @@ describe("parser", () => {
     };
     expect(output).toEqual(expected);
   });
+
+  it("should parse positive offset info line", () => {
+    const input = "[offset:+1000]";
+    const output = parser.parse(input);
+    const expected = {
+      type: "Lyrics",
+      content: [
+        {
+          type: "InfoLine",
+          tag: "offset",
+          value: 1000,
+        },
+      ],
+    };
+    expect(output).toEqual(expected);
+  });
+
+  it("should parse negative offset info line", () => {
+    const input = "[offset:-1000]";
+    const output = parser.parse(input);
+    const expected = {
+      type: "Lyrics",
+      content: [
+        {
+          type: "InfoLine",
+          tag: "offset",
+          value: -1000,
+        },
+      ],
+    };
+    expect(output).toEqual(expected);
+  });
 });
