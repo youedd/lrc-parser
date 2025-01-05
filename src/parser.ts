@@ -132,6 +132,7 @@ export class Parser {
       case "#": {
         const value = this.eatText({ excluded: ["NEWLINE", "]", "EOF"] });
         this.eat("]");
+
         return {
           type: "InfoLine",
           tag: infoTag,
@@ -156,6 +157,30 @@ export class Parser {
           type: "InfoLine",
           tag: "offset",
           value,
+        };
+      }
+
+      case "length": {
+        const minutesToken = this.eat("NUMBER");
+        const minutes = parseInt(minutesToken.value, 10);
+
+        this.eat(":");
+
+        const secondsToken = this.eat("NUMBER");
+        const seconds = parseInt(secondsToken.value, 10);
+
+        if (seconds >= 60) {
+          throw new Error(`Invalid seconds value: ${seconds}`);
+        }
+
+        const value = minutes * 60 * 1000 + seconds * 1000;
+
+        this.eat("]");
+
+        return {
+          type: "InfoLine",
+          tag: "length",
+          value: value,
         };
       }
 

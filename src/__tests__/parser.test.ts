@@ -260,4 +260,20 @@ describe("parser", () => {
     };
     expect(output).toEqual(expected);
   });
+
+  it("should parse song length info line", () => {
+    const input = "[length:01:01]";
+    const output = parser.parse(input);
+    const expected = {
+      type: "Lyrics",
+      content: [
+        {
+          type: "InfoLine",
+          tag: "length",
+          value: 61000,
+        },
+      ],
+    };
+    expect(output).toEqual(expected);
+  });
 });
