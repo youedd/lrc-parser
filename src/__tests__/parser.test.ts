@@ -84,4 +84,19 @@ describe("parser", () => {
     const input = "[00:01.100]Hello\n";
     expect(() => parser.parse(input)).toThrow("Invalid hundredths value: 100");
   });
+
+  it("should parse a title info line", () => {
+    const input = "[ti:Hello]";
+    const output = parser.parse(input);
+    const expected = {
+      type: "Lyrics",
+      content: [
+        {
+          type: "TitleInfoLine",
+          value: "Hello",
+        },
+      ],
+    };
+    expect(output).toEqual(expected);
+  });
 });

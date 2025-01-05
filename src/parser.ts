@@ -1,4 +1,4 @@
-import { Line, LyricLine, Lyrics } from "./ast";
+import { InfoLine, Line, LyricLine, Lyrics, TitleInfoLine } from "./ast";
 import { Token, Tokenizer, TokenType } from "./tokenizer";
 
 export class Parser {
@@ -56,7 +56,8 @@ export class Parser {
   }
   /**
    * Line
-   *   : LyricLine
+   *   : InfoLine
+   *   | LyricLine
    *   ;
    */
   private Line(): Line {
@@ -65,7 +66,7 @@ export class Parser {
       return this.LyricLine();
     }
 
-    throw new Error(`Unexpected token: ${this.lookaheadToken}`);
+    return this.InfoLine();
   }
 
   private LyricLine(): LyricLine {
@@ -113,6 +114,42 @@ export class Parser {
       value += this.eat("CHAR").value;
     }
     return value;
+  }
+
+  private InfoLine(): InfoLine {
+    let infoTag = "";
+
+    do {
+      infoTag += this.eat("CHAR").value;
+    } while (this.lookaheadToken?.type === "CHAR");
+
+    switch (infoTag) {
+      case "ti":
+        return this.TitleInfoLine();
+
+      default: {
+        throw new Error(`Unexpected token: ${this.lookaheadToken}`);
+      }
+    }
+  }
+
+  private TitleInfoLine(): TitleInfoLine {
+    this.eat(":");
+    let value = "";
+
+    while (
+      !["]", "NEWLINE", null].includes(this.lookaheadToken?.type ?? null)
+    ) {
+      value += this.lookaheadToken?.value;
+      this.lookaheadToken = this.tokenizer.next();
+    }
+
+    this.eat("]");
+
+    return {
+      type: "TitleInfoLine",
+      value,
+    };
   }
 
   private eat(token: TokenType) {

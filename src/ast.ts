@@ -4,7 +4,14 @@ export type LyricLine = {
   lyric: string;
 };
 
-export type Line = LyricLine;
+export type TitleInfoLine = {
+  type: "TitleInfoLine";
+  value: string;
+};
+
+export type InfoLine = TitleInfoLine;
+
+export type Line = LyricLine | InfoLine;
 
 export type Lyrics = {
   type: "Lyrics";
