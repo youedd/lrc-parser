@@ -1,9 +1,9 @@
 import { Tokenizer } from "../tokenizer";
 
 describe("tokenizer", () => {
-  it("should return null for empty string", () => {
+  it("should return EOF for empty string", () => {
     const tokenizer = new Tokenizer("");
-    expect(tokenizer.next()).toBe(null);
+    expect(tokenizer.next()).toEqual({ type: "EOF", value: "" });
   });
 
   it("should tokenize a string", () => {
@@ -19,6 +19,6 @@ describe("tokenizer", () => {
     expect(tokenizer.next()).toEqual({ type: ":", value: ":" });
     expect(tokenizer.next()).toEqual({ type: "CHAR", value: "d" });
     expect(tokenizer.next()).toEqual({ type: "]", value: "]" });
-    expect(tokenizer.next()).toEqual(null);
+    expect(tokenizer.next()).toEqual({ type: "EOF", value: "" });
   });
 });

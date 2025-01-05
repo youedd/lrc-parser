@@ -92,8 +92,137 @@ describe("parser", () => {
       type: "Lyrics",
       content: [
         {
-          type: "TitleInfoLine",
+          type: "InfoLine",
+          tag: "ti",
           value: "Hello",
+        },
+      ],
+    };
+    expect(output).toEqual(expected);
+  });
+
+  it("should parse artist info line", () => {
+    const input = "[ar:John Doe]";
+    const output = parser.parse(input);
+    const expected = {
+      type: "Lyrics",
+      content: [
+        {
+          type: "InfoLine",
+          tag: "ar",
+          value: "John Doe",
+        },
+      ],
+    };
+    expect(output).toEqual(expected);
+  });
+
+  it("should parse album info line", () => {
+    const input = "[al:Name]";
+    const output = parser.parse(input);
+    const expected = {
+      type: "Lyrics",
+      content: [
+        {
+          type: "InfoLine",
+          tag: "al",
+          value: "Name",
+        },
+      ],
+    };
+    expect(output).toEqual(expected);
+  });
+
+  it("should parse author info line", () => {
+    const input = "[au:John Doe]";
+    const output = parser.parse(input);
+    const expected = {
+      type: "Lyrics",
+      content: [
+        {
+          type: "InfoLine",
+          tag: "au",
+          value: "John Doe",
+        },
+      ],
+    };
+    expect(output).toEqual(expected);
+  });
+
+  it("should parse lyric author info line", () => {
+    const input = "[by:John Doe]";
+    const output = parser.parse(input);
+    const expected = {
+      type: "Lyrics",
+      content: [
+        {
+          type: "InfoLine",
+          tag: "by",
+          value: "John Doe",
+        },
+      ],
+    };
+    expect(output).toEqual(expected);
+  });
+
+  it("should parse lyric editor info line with re tag", () => {
+    const input = "[re:editor]";
+    const output = parser.parse(input);
+    const expected = {
+      type: "Lyrics",
+      content: [
+        {
+          type: "InfoLine",
+          tag: "re",
+          value: "editor",
+        },
+      ],
+    };
+    expect(output).toEqual(expected);
+  });
+
+  it("should parse lyric editor info line with tool tag", () => {
+    const input = "[tool:editor]";
+    const output = parser.parse(input);
+    const expected = {
+      type: "Lyrics",
+      content: [
+        {
+          type: "InfoLine",
+          tag: "tool",
+          value: "editor",
+        },
+      ],
+    };
+    expect(output).toEqual(expected);
+  });
+
+  it("should parse lyric editor version info line", () => {
+    const input = "[ve:version]";
+    const output = parser.parse(input);
+    const expected = {
+      type: "Lyrics",
+      content: [
+        {
+          type: "InfoLine",
+          tag: "ve",
+          value: "version",
+        },
+      ],
+    };
+    expect(output).toEqual(expected);
+  });
+
+  it("should parse comments info line", () => {
+    const input = "[#:comments]";
+    const output = parser.parse(input);
+    const expected = {
+      type: "Lyrics",
+      content: [
+        {
+          type: "InfoLine",
+          tag: "#",
+          value: "comments",
         },
       ],
     };

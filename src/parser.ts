@@ -1,15 +1,15 @@
-import { InfoLine, Line, LyricLine, Lyrics, TitleInfoLine } from "./ast";
+import { InfoLine, Line, LyricLine, Lyrics } from "./ast";
 import { Token, Tokenizer, TokenType } from "./tokenizer";
 
 export class Parser {
   private input: string;
   private tokenizer: Tokenizer;
-  private lookaheadToken: Token | null;
+  private lookaheadToken: Token;
 
   constructor() {
     this.input = "";
     this.tokenizer = new Tokenizer("");
-    this.lookaheadToken = null;
+    this.lookaheadToken = this.tokenizer.next();
   }
 
   /**
@@ -36,7 +36,7 @@ export class Parser {
   private Lyrics(): Lyrics {
     const content: Line[] = [];
 
-    while (this.lookaheadToken !== null) {
+    while (this.lookaheadToken.type !== "EOF") {
       switch (this.lookaheadToken.type) {
         case "NEWLINE":
           this.eat("NEWLINE");
@@ -117,15 +117,27 @@ export class Parser {
   }
 
   private InfoLine(): InfoLine {
-    let infoTag = "";
-
-    do {
-      infoTag += this.eat("CHAR").value;
-    } while (this.lookaheadToken?.type === "CHAR");
+    const infoTag = this.eatText({ included: ["CHAR"] });
+    this.eat(":");
 
     switch (infoTag) {
       case "ti":
-        return this.TitleInfoLine();
+      case "ar":
+      case "al":
+      case "au":
+      case "by":
+      case "re":
+      case "tool":
+      case "ve":
+      case "#": {
+        const value = this.eatText({ excluded: ["NEWLINE", "]", "EOF"] });
+        this.eat("]");
+        return {
+          type: "InfoLine",
+          tag: infoTag,
+          value,
+        };
+      }
 
       default: {
         throw new Error(`Unexpected token: ${this.lookaheadToken}`);
@@ -133,25 +145,35 @@ export class Parser {
     }
   }
 
-  private TitleInfoLine(): TitleInfoLine {
-    this.eat(":");
-    let value = "";
+  /**
+   * Helper to create a string from the current token and the following tokens
+   * Consume tokens until a token that is not included in the included list or is included in the excluded list
+   * @param options options to include or exclude tokens types
+   * @returns the string created from the tokens
+   */
+  private eatText(options?: {
+    included?: TokenType[];
+    excluded?: TokenType[];
+  }) {
+    const { included, excluded } = options ?? {};
 
+    let text = "";
     while (
-      !["]", "NEWLINE", null].includes(this.lookaheadToken?.type ?? null)
+      this.lookaheadToken &&
+      (!included || included.includes(this.lookaheadToken.type)) &&
+      (!excluded || !excluded.includes(this.lookaheadToken.type))
     ) {
-      value += this.lookaheadToken?.value;
+      text += this.lookaheadToken.value;
       this.lookaheadToken = this.tokenizer.next();
     }
-
-    this.eat("]");
-
-    return {
-      type: "TitleInfoLine",
-      value,
-    };
+    return text;
   }
-
+  /**
+   * Consume the current token and move to the next token
+   * throw an error if the current token is not the expected token
+   * @param token token type to consume
+   * @returns consumed token
+   */
   private eat(token: TokenType) {
     if (this.lookaheadToken?.type === token) {
       const prevToken = this.lookaheadToken;

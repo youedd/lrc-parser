@@ -4,13 +4,17 @@ export type LyricLine = {
   lyric: string;
 };
 
-export type TitleInfoLine = {
-  type: "TitleInfoLine";
-  value: string;
-};
-
-export type InfoLine = TitleInfoLine;
-
+export type InfoLine =
+  | {
+      type: "InfoLine";
+      tag: "ti" | "ar" | "al" | "au" | "by" | "re" | "tool" | "ve" | "#";
+      value: string;
+    }
+  | {
+      type: "InfoLine";
+      tag: "offset" | "length";
+      value: number;
+    };
 export type Line = LyricLine | InfoLine;
 
 export type Lyrics = {

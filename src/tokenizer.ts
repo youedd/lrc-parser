@@ -6,6 +6,7 @@ const specs = [
   { type: ":", pattern: /^:/ },
   { type: ".", pattern: /^\./ },
   { type: "CHAR", pattern: /^./ },
+  { type: "EOF", pattern: /^$/ },
 ] as const;
 
 export type TokenType = (typeof specs)[number]["type"];
@@ -22,11 +23,7 @@ export class Tokenizer {
     this.pos = 0;
   }
 
-  next(): Token | null {
-    if (this.eof()) {
-      return null;
-    }
-
+  next(): Token {
     const str = this.input.slice(this.pos);
 
     for (const { pattern, type } of specs) {
@@ -41,9 +38,5 @@ export class Tokenizer {
     }
 
     throw new Error(`Unexpected token at position ${this.pos}`);
-  }
-
-  private eof(): boolean {
-    return this.pos >= this.input.length;
   }
 }
